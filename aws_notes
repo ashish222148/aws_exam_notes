@@ -1,0 +1,75 @@
+**********************************************************************************    IAM   ************************************************************************************************
+Day-122:
+  For Login to the IAM user , there will be URL like https://248189903859.signin.aws.amazon.com/console, but this is not good practice to have account id of root in URl, so we can change 
+  this as well:
+    go to IAM-> Dashboard->create alias as ash, so URL will be in this was:  https://ash.signin.aws.amazon.com/console , here account id will be replaced by alias-ash.
+********************************************************************************************************************************************************************************************
+Day-123
+IAM Policies:
+  There are three types of policies:
+    1-AWS Managed Policies
+    2-Customer Managed Policies
+    3-Inline Policies
+  These Policies can be attached to three diffrent types of entities:
+    1-users
+    2-Groups
+    3-Role
+********************************************************************************************************************************************************************************************
+Day-124
+IAM-Customer Managed Policies:
+  Go to-IAM-Policy->Create Policy->Select the service(for ex-ec2)->select write-serach Instance->select start,stop,terminate->go to reseource specific->Add ARN in instance->copy the visual 
+  arn:aws:ec2::248189903859:instance/ and paste in text tab, change in this ARN as per instruction given below: ARNs have format - arn:aws:ec2:${Region}:${Account}:instance/${InstanceId}->
+  give the name of this policy and then go to policies-search this policy and attch with entity(user/role/group).
+
+Note: It is not good practice to check the policy effect by the user, so aws has given a facility which is known as ---Policy Simulator
+  Policy Simulator:https://policysim.aws.amazon.com
+  Policy size must not be grater than 6144 character including white space.
+  Deny pilicy always take precedance against allow.
+********************************************************************************************************************************************************************************************
+Day-125
+Inline Policy:
+  Normaly in aws once you create any resource a ARN is assigned, but for Inline policy there will be no ARN.
+  It will be deleted with the entity itself.
+  you can not find this policy in IAM Policy Option.
+  Attach to the single entity only.
+
+********************************************************************************************************************************************************************************************
+Day-126/127/128
+IAM Entity:
+role: role can be assigned to any user,application or services. 
+while creating role , we have to select the trusted entity type.
+  1-aws service (allow aws serice like ec2, lambda)
+  2-aws account (allow other user to perform action)
+  3-web identity
+  4-SAML 2.0 federation
+  5-custom trust policy
+1-Aws Services:  
+First Approach- 
+  Create a IAM  user -> don not provide this user aws management console access.
+  Create access key -> make sure select application running on an aws compute service.
+  Create Cutomer Managed Policy and assign s3full access permission.
+  Create ec2 instnce with user data which will accept Access ID/Secret Key and bucket details.
+  upload the image to the website hosted on ec2.
+  result: image will be uploaded to the s3 bucket
+drawback- providing access id and secret key is not a good practice.
+
+Second Approach-
+  Create Role-> service(ex-ec2)
+  Create ec2-in advance details->IAM instance profile->select role
+  conclusion: create role , attach policy to the role and attach that role with ec2 instance.
+  we can attach the IAM role, from action-security -modify IAM role
+
+********************************************************************************************************************************************************************************************
+Day-129
+2-aws account--two types: this account and cross account
+this account:
+AWS assume role: It is temporary role, for time duration such as one hour or so
+  create IAM user and attach ec2full permission.
+  create s3-role with s3full permission.
+  open the s3 role and go to in trust relationship:in add principal-paste the arn of iam user.
+Note: we can add the user in to the role under trust relation ship to get the access.
+when user want to access the grants, he have to switch the role which has been user requested. then user will be get access, but previous access will not apply at that moment.
+user can switch back to the role.
+
+Aws Security Token Services grant temprory credential with customizable life span 15 minutes to 12 hours , default 1 hour.
+
